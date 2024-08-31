@@ -135,6 +135,49 @@
                             </div>
                         </div>
 
+                        <!-- ตำแหน่ง -->
+                        <div class="row mb-3">
+                            <label for="position"
+                                class="col-md-4 col-form-label text-md-end">{{ __('Position') }}</label>
+                            <div class="col-md-6">
+                                <select id="position" class="form-control @error('position') is-invalid @enderror"
+                                    name="position" required>
+                                    <option value="" disabled selected>{{ __('Select Position') }}</option>
+                                    @foreach($position as $posi)
+                                        <option value="{{ $posi->position_id }}" {{ old('position') == $posi->position_id ? 'selected' : '' }}>
+                                            {{ $posi->position_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('position')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- บทบาท -->
+                        <div class="row mb-3">
+                            <label for="role" class="col-md-4 col-form-label text-md-end">{{ __('Role') }}</label>
+                            <div class="col-md-6">
+                                <select id="role" class="form-control @error('role') is-invalid @enderror" name="role"
+                                    required>
+                                    <option value="" disabled selected>{{ __('Select Role') }}</option>
+                                    @foreach($role as $roles)
+                                        <option value="{{ $roles->role_id }}" {{ old('role') == $roles->role_id ? 'selected' : '' }}>
+                                            {{ $roles->role_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- ปุ่มลงทะเบียน -->
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
@@ -150,16 +193,23 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const division = document.getElementById('division');
         const department = document.getElementById('department');
+        const form = document.querySelector('form');
 
-        division.addEventListener('change', function() {
+        division.addEventListener('change', function () {
             if (division.value == '6') {
                 department.disabled = false;
             } else {
                 department.disabled = true;
                 department.value = ''; // รีเซ็ตการเลือกแผนก
+            }
+        });
+
+        form.addEventListener('submit', function (event) {
+            if (division.value != '6') {
+                department.value = null; // ตั้งค่า department เป็น null
             }
         });
     });

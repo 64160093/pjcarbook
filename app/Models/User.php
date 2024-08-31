@@ -19,7 +19,9 @@ class User extends Authenticatable
         'signature_name',
         'is_admin',
         'division_id',
-        'department_id' , //เก็บค่าเข้าตาราง users
+        'department_id' ,
+        'position_id',
+        'role_id', //เก็บค่าเข้าตาราง users
     ];
 
     // Fields that should be hidden
@@ -51,6 +53,14 @@ class User extends Authenticatable
         }
         return "https://api.dicebear.com/6.x/fun-emoji/svg?seed={$this->name}";
     }
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
     
-
+    // Check if user is admin
+    public function isAdmin()
+    {
+        return $this->is_admin == 1;
+    }
 }

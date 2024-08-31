@@ -9,13 +9,19 @@
 
 @section('content')
 <div class="container mt-5">
-    {{-- For Search --}}
-    <div class="row">
-        <div class="col-md-12 d-flex justify-content-end">
-            <div class="btn-group mb-3" role="group" aria-label="Calendar Actions">
-                <button id="exportButton" class="btn btn-success">{{__('Export Calendar')}}</button>
-            </div>
+    @if (session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
+    @endif
 
+    <div class="row">
+        <div class="col-md-6 justify-content-start">
+            <a href="{{ route('reqdocument.form') }}" class="btn btn-primary">{{ __('Add Event') }}</a>
+
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <button id="exportButton" class="btn btn-success">{{ __('Export Calendar') }}</button>
         </div>
     </div>
 
@@ -47,7 +53,7 @@
         },
         initialView: 'dayGridMonth',
         timeZone: 'Asia/Bangkok', editable: true,
-        
+
         events: [
             {
                 id: '1',
@@ -164,7 +170,10 @@
 
     calendar.render();
 
-
+    document.getElementById('addButton').addEventListener('click', function () {
+        // ใส่โค้ดที่คุณต้องการให้ทำเมื่อคลิกปุ่มเพิ่มเหตุการณ์ตรงนี้
+        alert('กดปุ่มเพิ่มเหตุการณ์แล้ว!');
+    });
 
 
     // Exporting Function
