@@ -17,7 +17,7 @@
 
     <div class="row">
         <div class="col-md-6 justify-content-start">
-            <a href="{{ route('reqdocument.form') }}" class="btn btn-primary">{{ __('Add Event') }}</a>
+            <a href="{{ route('reqdocument.create') }}" class="btn btn-primary">{{ __('Add Event') }}</a>
 
         </div>
         <div class="col-md-6 d-flex justify-content-end">

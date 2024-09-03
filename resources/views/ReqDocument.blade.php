@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Request Document</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 @endsection
 
 @section('content')
@@ -27,14 +28,65 @@
                     <input type="text" class="form-control" id="purpose" name="purpose" required>
                 </div>
 
+                <!-- จังหวัด -->
                 <div class="form-group">
-                    <label for="province">{{ __('จังหวัด') }}</label>
-                    <input type="text" class="form-control" id="province" name="province" required>
+                    <label for="provinces_id">{{ __('จังหวัด') }}</label>
+                    <select id="provinces_id" class="form-control @error('provinces_id') is-invalid @enderror"
+                        name="provinces_id" required>
+                        <option value="" disabled selected>{{ __('เลือกจังหวัด') }}</option>
+                        @foreach($provinces as $province)
+                            <option value="{{ $province->provinces_id }}" {{ old('provinces_id') == $province->provinces_id ? 'selected' : '' }}>
+                                {{ $province->name_th }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('provinces_id')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
                 </div>
 
+                <!-- อำเภอ -->
                 <div class="form-group">
-                    <label for="subdistrict">{{ __('ตำบล/แขวง') }}</label>
-                    <input type="text" class="form-control" id="subdistrict" name="subdistrict" required>
+                    <label for="amphoe_id">{{ __('อำเภอ') }}</label>
+                    <select id="amphoe_id" class="form-control @error('amphoe_id') is-invalid @enderror"
+                        name="amphoe_id" required>
+                        <option value="" disabled selected>{{ __('เลือกอำเภอ') }}</option>
+                        @if(old('provinces_id'))
+                            @foreach($amphoes as $amphoe)
+                                <option value="{{ $amphoe->amphoe_id }}" {{ old('amphoe_id') == $amphoe->amphoe_id ? 'selected' : '' }}>
+                                    {{ $amphoe->name_th }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('amphoe_id')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+
+                <!-- ตำบล -->
+                <div class="form-group">
+                    <label for="district_id">{{ __('ตำบล') }}</label>
+                    <select id="district_id" class="form-control @error('district_id') is-invalid @enderror"
+                        name="district_id" required>
+                        <option value="" disabled selected>{{ __('เลือกตำบล') }}</option>
+                        @if(old('amphoe_id'))
+                            @foreach($districts as $district)
+                                <option value="{{ $district->district_id }}" {{ old('district_id') == $district->district_id ? 'selected' : '' }}>
+                                    {{ $district->name_th }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    @error('district_id')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
                 </div>
 
                 <div class="form-group">
@@ -88,9 +140,9 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="project_file">{{ __('โครงการที่เกี่ยวข้อง (แนบไฟล์ PDF)') }}</label>
-                    <input type="file" class="form-control-file" id="project_file" name="project_file" accept=".pdf"
+                <div class="form-group mb-3 ">
+                    <label for="project_file" class="form-label">{{ __('โครงการที่เกี่ยวข้อง (แนบไฟล์ PDF)') }}</label>
+                    <input type="file" class="form-control" id="project_file" name="project_file" accept=".pdf"
                         required>
                 </div>
 
@@ -108,4 +160,58 @@
         document.getElementById('request_date').value = today;
     });
 </script>
-@endsection 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#provinces_id').on('change', function () {
+            var provinceId = $(this).val();
+            if (provinceId) {
+                $.ajax({
+                    url: '/get-amphoes/' + provinceId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        $('#amphoe_id').empty();
+                        $('#amphoe_id').append('<option value="" disabled selected>{{ __('เลือกอำเภอ') }}</option>');
+                        $.each(data, function (key, value) {
+                            $('#amphoe_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error('AJAX Error: ', xhr.responseText);
+                    }
+                });
+            } else {
+                $('#amphoe_id').empty();
+                $('#amphoe_id').append('<option value="" disabled selected>{{ __('เลือกอำเภอ') }}</option>');
+            }
+        });
+
+        $('#amphoe_id').on('change', function () {
+            var amphoeId = $(this).val();
+            if (amphoeId) {
+                $.ajax({
+                    url: '/get-districts/' + amphoeId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        $('#district_id').empty();
+                        $('#district_id').append('<option value="" disabled selected>{{ __('เลือกตำบล') }}</option>');
+                        $.each(data, function (key, value) {
+                            $('#district_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error('AJAX Error: ', xhr.responseText);
+                    }
+                });
+            } else {
+                $('#district_id').empty();
+                $('#district_id').append('<option value="" disabled selected>{{ __('เลือกตำบล') }}</option>');
+            }
+        });
+    });
+</script>
+
+@endsection
