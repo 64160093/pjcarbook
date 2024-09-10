@@ -6,21 +6,26 @@ use App\Models\ReqDocument;
 use App\Models\Province;
 use App\Models\Amphoe;
 use App\Models\District;
+use App\Models\WorkType;
+
 
 class ReqDocumentController extends Controller
 {
     public function index()
     {
-
+        $documents = ReqDocument::all(); // ดึงข้อมูลทั้งหมดจากตาราง req_document
+        return view('document', compact('documents'));
     }
     public function create()
     {
         $provinces = Province::all();
-        $amphoes = Amphoe::all();
-        $districts = District::all();
+        $amphoe = Amphoe::all(); // ดึงข้อมูลอำเภอทั้งหมด
+        $district = District::all(); // ดึงข้อมูลตำบลทั้งหมด
+        $work_type = WorkType::all(); // สมมติว่าคุณมีโมเดล WorkType
 
-        return view('reqdocument', compact('provinces', 'amphoes', 'districts'));
+        return view('reqdocument', compact('provinces', 'amphoe', 'district','work_type'));
     }
+
 
 
     public function store(Request $request)
@@ -38,15 +43,17 @@ class ReqDocumentController extends Controller
             'end_time' => 'required',
             'sum_companion' => 'required|integer',
             'car_type' => 'required|string|max:255',
-            'related_project' => 'nullable|file|mimes:pdf|max:10240', // ตรวจสอบไฟล์ที่แนบ
-            'provinces_id' => 'required|exists:provinces,id',
-            'amphoe_id' => 'required|exists:amphoes,id',
-            'district_id' => 'required|exists:districts,id',
+            'related_project' => 'nullable|mimes:pdf|max:2048', // ตรวจสอบไฟล์ที่แนบ
+            'provinces_id' => 'required|exists:provinces,provinces_id',
+            'amphoe_id' => 'required|exists:amphoe,amphoe_id',
+            'district_id' => 'required|exists:district,district_id',
+            'work_id' => 'required|exists:work_type,work_id', 
         ]);
 
         // จัดการการอัปโหลดไฟล์
-        if ($request->hasFile('project_file')) {
-            $filePath = $request->file('project_file')->store('projects');
+        $filePath = null;
+        if ($request->hasFile('related_project')) {
+            $filePath = $request->file('related_project')->store('projects');
         }
 
         // Store the data in the database
@@ -64,11 +71,14 @@ class ReqDocumentController extends Controller
             'sum_companion' => $request->sum_companion,
             'car_type' => $request->car_type,
             'provinces_id' => $request->provinces_id,
-            'subdistrict' => $request->subdistrict,
+            'amphoe_id' => $request->amphoe_id,
+            'district_id' => $request->district_id,
+            'work_id' => $request->work_id, 
+
         ]);
 
-
-        return redirect()->route('documents.index')->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
+        return redirect('/documents')->with('success', 'บันทึกข้อมูลเรียบร้อยแล้ว');
+        
     }
     public function __construct()
     {
@@ -80,7 +90,7 @@ class ReqDocumentController extends Controller
         $amphoes = Amphoe::where('provinces_id', $provinceId)->get(['amphoe_id as id', 'name_th as name']);
         return response()->json($amphoes);
     }
-    
+
     public function getDistricts($amphoeId)
     {
         $districts = District::where('amphoe_id', $amphoeId)->get(['district_id as id', 'name_th as name']);

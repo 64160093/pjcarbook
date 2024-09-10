@@ -31,8 +31,10 @@ Route::put('/profile', [UserController::class, 'update'])->name('profile.update'
 Route::get('/', [CalendarController::class, 'show']);
 
 Route::get('/reqdocument', [ReqDocumentController::class, 'create'])->name('reqdocument.create');
-Route::post('/reqdocument/store', [ReqDocumentController::class, 'store'])->name('reqdocument.store');
+Route::post('/reqdocument', [ReqDocumentController::class, 'store'])->name('reqdocument.store');
 Route::get('/get-amphoes/{provinceId}', [ReqDocumentController::class, 'getAmphoes']);
 Route::get('/get-districts/{amphoeId}', [ReqDocumentController::class, 'getDistricts']);
 
 Route::get('/documents', [ReqDocumentController::class, 'index'])->name('documents.index');
+Route::get('/documents/create', [ReqDocumentController::class, 'create'])->name('documents.create');
+Route::post('/documents', [ReqDocumentController::class, 'store'])->name('documents.store');

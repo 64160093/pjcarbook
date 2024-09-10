@@ -88,60 +88,60 @@
         ],
 
         // Deleting The Event
-        eventContent: function (info) {
-            var eventTitle = info.event.title;
-            var eventElement = document.createElement('div');
-            eventElement.innerHTML = '<span style="cursor: pointer;">❌</span> ' + eventTitle;
+        // eventContent: function (info) {
+        //     var eventTitle = info.event.title;
+        //     var eventElement = document.createElement('div');
+        //     eventElement.innerHTML = '<span style="cursor: pointer;">❌</span> ' + eventTitle;
 
-            eventElement.querySelector('span').addEventListener('click', function () {
-                if (confirm("Are you sure you want to delete this event?")) {
-                    var eventId = info.event.id;
-                    $.ajax({
-                        method: 'get',
-                        url: '/schedule/delete/' + eventId,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function (response) {
-                            console.log('Event deleted successfully.');
-                            calendar.refetchEvents(); // Refresh events after deletion
-                        },
-                        error: function (error) {
-                            console.error('Error deleting event:', error);
-                        }
-                    });
-                }
-            });
-            return {
-                domNodes: [eventElement]
-            };
-        },
+        //     eventElement.querySelector('span').addEventListener('click', function () {
+        //         if (confirm("Are you sure you want to delete this event?")) {
+        //             var eventId = info.event.id;
+        //             $.ajax({
+        //                 method: 'get',
+        //                 url: '/schedule/delete/' + eventId,
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //                 },
+        //                 success: function (response) {
+        //                     console.log('Event deleted successfully.');
+        //                     calendar.refetchEvents(); // Refresh events after deletion
+        //                 },
+        //                 error: function (error) {
+        //                     console.error('Error deleting event:', error);
+        //                 }
+        //             });
+        //         }
+        //     });
+        //     return {
+        //         domNodes: [eventElement]
+        //     };
+        // },
 
         // Drag And Drop
 
-        eventDrop: function (info) {
-            var eventId = info.event.id;
-            var newStartDate = info.event.start;
-            var newEndDate = info.event.end || newStartDate;
-            var newStartDateUTC = newStartDate.toISOString().slice(0, 10);
-            var newEndDateUTC = newEndDate.toISOString().slice(0, 10);
+        // eventDrop: function (info) {
+        //     var eventId = info.event.id;
+        //     var newStartDate = info.event.start;
+        //     var newEndDate = info.event.end || newStartDate;
+        //     var newStartDateUTC = newStartDate.toISOString().slice(0, 10);
+        //     var newEndDateUTC = newEndDate.toISOString().slice(0, 10);
 
-            $.ajax({
-                method: 'post',
-                url: `/schedule/${eventId}`,
-                data: {
-                    '_token': "{{ csrf_token() }}",
-                    start_date: newStartDateUTC,
-                    end_date: newEndDateUTC,
-                },
-                success: function () {
-                    console.log('Event moved successfully.');
-                },
-                error: function (error) {
-                    console.error('Error moving event:', error);
-                }
-            });
-        },
+        //     $.ajax({
+        //         method: 'post',
+        //         url: `/schedule/${eventId}`,
+        //         data: {
+        //             '_token': "{{ csrf_token() }}",
+        //             start_date: newStartDateUTC,
+        //             end_date: newEndDateUTC,
+        //         },
+        //         success: function () {
+        //             console.log('Event moved successfully.');
+        //         },
+        //         error: function (error) {
+        //             console.error('Error moving event:', error);
+        //         }
+        //     });
+        // },
 
         // Event Resizing
         eventResize: function (info) {
@@ -169,12 +169,6 @@
     });
 
     calendar.render();
-
-    document.getElementById('addButton').addEventListener('click', function () {
-        // ใส่โค้ดที่คุณต้องการให้ทำเมื่อคลิกปุ่มเพิ่มเหตุการณ์ตรงนี้
-        alert('กดปุ่มเพิ่มเหตุการณ์แล้ว!');
-    });
-
 
     // Exporting Function
     document.getElementById('exportButton').addEventListener('click', function () {
