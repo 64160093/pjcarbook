@@ -9,6 +9,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsUsers;
+use App\Http\Controllers\AdminController;
+
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use App\Http\Controllers\ReqDocumentController;
@@ -20,10 +23,15 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 // เส้นทางสำหรับการยืนยันตัวตน
 Auth::routes();
 
-// Routes ที่ต้องการให้เฉพาะแอดมินเข้าถึง
-Route::group(['middleware' => ['admin']], function () {
-    
-});
+
+Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users')
+    ->middleware(IsAdmin::class);
+
+    // routes/web.php
+Route::get('/admin/users/edit/{id}', [AdminController::class, 'editUser'])->name('admin.users.edit')
+    ->middleware(IsAdmin::class);
+Route::post('/admin/users/update/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+Route::post('/admin/users/delete/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.delete');
 
 // แก้ไขโปนไฟล์
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
